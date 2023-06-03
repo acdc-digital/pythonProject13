@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected Area</title>
+    <link rel="stylesheet" href="/static/css/protected.css">
+    <script src="/static/js/protected.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Medex Assistant</h1>
+        <nav>
+            <a href="/logout">Logout</a>
+        </nav>
+    </header>
+    <main>
+        <section class="chat">
+            <div id="chat-output"></div>
+            <form id="chat-input" onsubmit="sendMessage(event)">
+                <input type="text" name="message" placeholder="Type your message here" required>
+                <button type="submit">Send</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

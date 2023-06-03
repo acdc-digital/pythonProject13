@@ -1,0 +1,47 @@
+import os
+from medex_project.data.medical_corpus import MedicalCorpus
+from medex_project.data.privacy_data import PrivacyData
+from medex_project.data.user_data_corpus import UserDataCorpus
+from medex_project.preprocessing.clean_data import clean_data
+from medex_project.preprocessing.split_data import split_data
+from medex_project.preprocessing.tokenize_data import tokenize_data
+from medex_project.model_parameters.medex_hyperparameters import MedexHyperparameters
+from medex_project.model_parameters.medex_language_model import get_medex_language_model
+from medex_project.model_parameters.medex_training import train_medex_model
+from medex_project.model_parameters.medex_evaluation import evaluate_medex_model
+from medex_project.utils.privacy_filter import apply_privacy_filter
+from medex_project.utils.interpretation import interpret_medical_data
+from medex_project.utils.save_load_model import save_model, load_model
+
+def main():
+    # Load data
+    medical_corpus = MedicalCorpus()
+    privacy_data = PrivacyData()
+    user_data_corpus = UserDataCorpus()
+
+    # Preprocess data
+    clean_data(medical_corpus, privacy_data, user_data_corpus)
+    train_data, test_data = split_data(medical_corpus)
+    train_data_tokenized, test_data_tokenized = tokenize_data(train_data, test_data)
+
+    # Set up model parameters
+    hyperparameters = MedexHyperparameters()
+    language_model, tokenizer = get_medex_language_model(hyperparameters.medex_language_model)
+
+    # Train and evaluate the model
+    train_medex_model(language_model, train_data_tokenized, hyperparameters)
+    evaluation_results = evaluate_medex_model(language_model, test_data_tokenized)
+
+    # Apply privacy filter and interpret medical data
+    filtered_data = apply_privacy_filter(user_data_corpus, privacy_data)
+    interpreted_data = interpret_medical_data(filtered_data, language_model, tokenizer)
+
+    # Save and load the model
+    save_model(language_model, "medex_language_model.pth")
+    loaded_model = load_model("medex_language_model.pth")
+
+    print("Model evaluation results:", evaluation_results)
+    print("Interpreted medical data:", interpreted_data)
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medex - Registration</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Medex</h1>
+        <p>Register to access the Medex assistant and manage your medical data.</p>
+        <form id="register-form" action="/register" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" required>
+            <br>
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" required>
+            <br>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required>
+            <br>
+            <label for="confirm_password">Confirm Password:</label>
+            <input type="password" name="confirm_password" id="confirm_password" required>
+            <br>
+            <input type="submit" value="Register">
+        </form>
+        <p>Already have an account? <a href="/login">Login here</a></p>
+    </div>
+</body>
+</html>
