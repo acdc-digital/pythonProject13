@@ -1,18 +1,20 @@
+from database import db, User
 from flask import Flask, render_template, url_for, redirect, flash
-from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
-from create_app import create_app
 
-app = create_app()
-db = SQLAlchemy(app)
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your-secret-key'  # Replace with your secret key
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://your-database-uri'  # Replace with your PostgreSQL database URI
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db.init_app(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    from database import User
     return User.query.get(int(user_id))
 
 @app.route('/')
@@ -26,12 +28,12 @@ def login():
         return redirect(url_for('protected'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(username=form.username.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             return redirect(url_for('protected'))
         else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
+            flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login/login.html', form=form)
 
 @app.route('/logout')

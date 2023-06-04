@@ -1,4 +1,3 @@
-import os
 from medex_project.data.medical_corpus import MedicalCorpus
 from medex_project.data.privacy_data import PrivacyData
 from medex_project.data.user_data_corpus import UserDataCorpus
@@ -13,11 +12,23 @@ from medex_project.utils.privacy_filter import apply_privacy_filter
 from medex_project.utils.interpretation import interpret_medical_data
 from medex_project.utils.save_load_model import save_model, load_model
 
+
 def main():
-    # Load data
-    medical_corpus = MedicalCorpus()
-    privacy_data = PrivacyData()
-    user_data_corpus = UserDataCorpus()
+    # Define user_id and sensitive_data
+    user_id = 123  # Replace with the actual user ID
+    sensitive_data = "Some sensitive data"  # Replace with the actual sensitive data
+
+    # Create PrivacyData instance
+    privacy_data = PrivacyData(user_id, sensitive_data)
+
+    # Try-except blocks to handle potential errors
+    try:
+        # Load data
+        medical_corpus = MedicalCorpus("medex_project/data/medical_corpus.json")
+        user_data_corpus = UserDataCorpus("medex_project/data/user_data")  # Update with the correct directory path
+    except FileNotFoundError as e:
+        print("Unable to load data:", e)
+        return
 
     # Preprocess data
     clean_data(medical_corpus, privacy_data, user_data_corpus)
@@ -26,7 +37,12 @@ def main():
 
     # Set up model parameters
     hyperparameters = MedexHyperparameters()
-    language_model, tokenizer = get_medex_language_model(hyperparameters.medex_language_model)
+
+    try:
+        language_model, tokenizer = get_medex_language_model(hyperparameters.medex_language_model)
+    except ImportError as e:
+        print("Unable to import MedexLanguageModel:", e)
+        return
 
     # Train and evaluate the model
     train_medex_model(language_model, train_data_tokenized, hyperparameters)
@@ -38,10 +54,11 @@ def main():
 
     # Save and load the model
     save_model(language_model, "medex_language_model.pth")
-    loaded_model = load_model("medex_language_model.pth")
 
-    print("Model evaluation results:", evaluation_results)
-    print("Interpreted medical data:", interpreted_data)
+    try:
+        loaded_model = load_model("medex_language_model.pth")
+    except Exception as e:
+        print("Unable to load the saved model:", e)
+        return
 
-if __name__ == "__main__":
-    main()
+

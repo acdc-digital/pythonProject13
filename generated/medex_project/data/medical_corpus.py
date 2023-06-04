@@ -2,8 +2,8 @@ import os
 import json
 
 class MedicalCorpus:
-    def __init__(self):
-        self.medical_corpus_file = "medical_corpus.json"
+    def __init__(self, filepath="medical_corpus.json"):
+        self.medical_corpus_file = filepath
         self.medical_corpus = self.load_medical_corpus()
 
     def load_medical_corpus(self):
@@ -33,3 +33,4 @@ class MedicalCorpus:
         if key in self.medical_corpus:
             self.medical_corpus[key] = value
             self.save_medical_corpus()
+
